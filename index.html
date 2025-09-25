@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Um Pedido Especial</title>
+    <!-- Inclui o Tailwind CSS para estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 1rem;
+        }
+
+        /* Animação para a chuva de corações */
+        @keyframes flyHeart {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg) scale(1.5);
+                opacity: 0;
+            }
+        }
+        .animate-heart {
+            animation: flyHeart 5s ease-in-out forwards;
+        }
+
+        /* Transição para o botão "Não" */
+        #noBtn {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-fuchsia-400 to-rose-500 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Container principal do site, com design responsivo -->
+    <div class="container bg-white bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-2xl p-8 shadow-xl text-center max-w-lg w-full transform transition-transform duration-500 hover:scale-105">
+        
+        <!-- Imagem e Título -->
+        <img id="mainImage" class="w-48 h-48 mx-auto rounded-full object-cover mb-6 shadow-md border-4 border-white transform transition-transform duration-500" src="necos.jpg" alt="Uma foto de vocês dois">
+
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">oi neca</h1>
+        <p class="text-lg md:text-xl font-medium mb-8">
+            você me ensinou o que é o amor, você é a mulher da minha vida, e eu te amo mais e mais cada dia que passa. Por isso, tenho uma pergunta muito importante para te fazer...
+        </p>
+        
+        <h2 id="mainQuestion" class="text-3xl md:text-4xl font-extrabold mb-8 text-white p-2 rounded-xl">
+            Quer namorar comigo?
+        </h2>
+
+        <!-- Contêiner dos botões -->
+        <div id="buttonsContainer" class="flex flex-col md:flex-row items-center justify-center gap-6 relative">
+            
+            <!-- Botão "Sim" com acessibilidade aprimorada -->
+            <button id="yesBtn" aria-label="Sim" class="bg-green-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-110">
+                Sim!
+            </button>
+            
+            <!-- Botão "Não" (que se move) -->
+            <button id="noBtn" aria-label="Não" class="bg-red-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-red-600">
+                Não :/
+            </button>
+        </div>
+
+        <!-- Mensagem de Confirmação (inicialmente oculta) -->
+        <div id="confirmationMessage" class="mt-8 p-4 bg-green-500 rounded-lg text-white font-bold text-lg hidden transform scale-0 transition-transform duration-500 ease-in-out">
+            Eu te amo princesa! ❤️
+        </div>
+
+    </div>
+
+    <!-- Script de Interação -->
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const buttonsContainer = document.getElementById('buttonsContainer');
+        
+        // Define as posições iniciais do botão "Não"
+        let currentX = 0;
+        let currentY = 0;
+
+        // Função otimizada para o botão "Não"
+        function moveNoButton() {
+            // Define o máximo de movimento para que o botão permaneça no contêiner
+            const maxX = 150;
+            const maxY = 50;
+
+            // Gera novas posições que são um pequeno deslocamento do local atual
+            // A matemática garante que a nova posição esteja sempre dentro dos limites definidos
+            const newX = Math.random() * (maxX * 2) - maxX;
+            const newY = Math.random() * (maxY * 2) - maxY;
+
+            // Aplica a nova posição usando 'transform', que é mais suave e performático
+            noBtn.style.transform = `translate(${newX}px, ${newY}px)`;
+        }
+        
+        // Adiciona um listener para o mouse e outro para o toque, garantindo que o botão "fuga"
+        // A lógica de toque agora se baseia no início do toque, o que é mais confiável do que o movimento
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('touchstart', moveNoButton);
+
+        // Lógica para o botão "Sim"
+        yesBtn.addEventListener('click', () => {
+            // Esconde os botões
+            buttonsContainer.style.display = 'none';
+            // Mostra a mensagem de confirmação
+            confirmationMessage.classList.remove('hidden');
+            // Anima a mensagem para que ela apareça de forma suave
+            setTimeout(() => {
+                confirmationMessage.style.transform = 'scale(1)';
+            }, 10);
+            
+            // Adiciona um efeito de partículas de coração
+            createHearts();
+        });
+
+        // Simula uma chuva de corações para celebrar a resposta "Sim"
+        function createHearts() {
+            const count = 50;
+            for (let i = 0; i < count; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️'; // Ícone de coração
+                heart.className = 'absolute text-3xl opacity-0 animate-heart';
+                
+                // Posição inicial aleatória na parte inferior da tela
+                heart.style.left = `${Math.random() * 100}vw`;
+                
+                // Adiciona um atraso para o efeito de "chuva"
+                heart.style.animationDelay = `${Math.random() * 2}s`;
+                
+                // Adiciona o coração ao corpo do documento
+                document.body.appendChild(heart);
+
+                // Remove o coração após a animação para limpar o DOM
+                heart.addEventListener('animationend', () => {
+                    heart.remove();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
